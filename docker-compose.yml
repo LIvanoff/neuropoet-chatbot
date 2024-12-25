@@ -12,6 +12,6 @@ services:
       context: ./bot
     container_name: telegram_bot
     environment:
-      - TELEGRAM_TOKEN=8071926281:AAFus4IZclSClhaQ9cWh6J9vv8U1W6FpRdQ  # Укажите токен для бота
+      - TELEGRAM_TOKEN= # Укажите токен для бота
     depends_on:
       - api

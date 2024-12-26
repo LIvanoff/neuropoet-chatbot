@@ -1,18 +1,19 @@
 # app.py
-from flask import Flask, request, jsonify
+from fastapi import FastAPI
+from pydantic import BaseModel
 from transformers import pipeline
 
-app = Flask(__name__)
+app = FastAPI()
+llm = pipeline("text-generation", model="gpt2")
 
-# Инициализация модели
-llm = pipeline("text-generation", model="gpt2")  # Можно заменить на более подходящую модель
 
-@app.route('/generate', methods=['POST'])
-def generate_text():
-    data = request.json
-    prompt = data.get('prompt', '')
-    response = llm(prompt, max_length=100, num_return_sequences=1)
-    return jsonify(response[0]["generated_text"])
+class PromptRequest(BaseModel):
+    prompt: str
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+@app.post("/generate")
+async def generate_text(request: PromptRequest):
+    prompt = request.prompt
+    response = llm(prompt, max_length=512, num_return_sequences=1)
+
+    return {"generated_text": response[0]["generated_text"]}
+
